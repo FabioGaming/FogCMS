@@ -1,0 +1,13 @@
+name: Main Integrity CI
+
+on:
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    server-ci:
+        uses: ./.github/workflows/server-ci.yml
+
+    client-ci:
+        uses: ./.github/workflows/client-ci.yml
