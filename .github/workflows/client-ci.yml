@@ -18,8 +18,12 @@ jobs:
             - uses: actions/setup-node@v4
               with:
                   node-version: "20"
-                  cache: "npm"
-                  cache-dependency-path: fogcms-client/package-lock.json
+
+            - name: Cache node_modules
+              uses: actions/cache@v4
+              with:
+                  path: node_modules
+                  key: client-ci-install-${{ github.run_id }}-${{ hashFiles('package-lock.json') }}
 
             - name: Install dependencies
               run: npm ci
@@ -38,7 +42,13 @@ jobs:
               with:
                   node-version: "20"
 
-            - name: Format check
+            - name: Cache node_modules
+              uses: actions/cache@v4
+              with:
+                  path: node_modules
+                  key: client-ci-format-${{ github.run_id }}-${{ hashFiles('package-lock.json') }}
+
+            - name: Run format check
               run: npm run format:check
 
     lint:
@@ -55,7 +65,13 @@ jobs:
               with:
                   node-version: "20"
 
-            - name: Lint
+            - name: Cache node_modules
+              uses: actions/cache@v4
+              with:
+                  path: node_modules
+                  key: client-ci-lint-${{ github.run_id }}-${{ hashFiles('package-lock.json') }}
+
+            - name: Run lint
               run: npm run lint
 
     test:
@@ -72,8 +88,14 @@ jobs:
               with:
                   node-version: "20"
 
+            - name: Cache node_modules
+              uses: actions/cache@v4
+              with:
+                  path: node_modules
+                  key: client-ci-test-${{ github.run_id }}-${{ hashFiles('package-lock.json') }}
+
             - name: Run tests
-              run: npx ng test --watch=false --browsers=ChromeHeadless
+              run: npm run test -- --watch=false --browsers=ChromeHeadless
 
     build:
         name: Build
@@ -89,5 +111,11 @@ jobs:
               with:
                   node-version: "20"
 
+            - name: Cache node_modules
+              uses: actions/cache@v4
+              with:
+                  path: node_modules
+                  key: client-ci-build-${{ github.run_id }}-${{ hashFiles('package-lock.json') }}
+
             - name: Build production
-              run: npx ng build --configuration production
+              run: npm run build -- --configuration production
